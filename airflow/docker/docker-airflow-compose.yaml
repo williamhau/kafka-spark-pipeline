@@ -1,0 +1,46 @@
+services:
+  airflow-init:
+    image: apache/airflow:3.1.7
+    container_name: airflow-init
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    user: "${AIRFLOW_UID:-50000}:0"
+    command: bash -c "airflow db migrate"
+    network_mode: host
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./config:/opt/airflow/config
+
+  airflow-api-server:
+    image: apache/airflow:3.1.7
+    container_name: airflow-api-server
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_USERS: "airflow:admin"
+    user: "${AIRFLOW_UID:-50000}:0"
+    command: api-server
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./config:/opt/airflow/config
+    network_mode: host
+
+  airflow-scheduler:
+    image: apache/airflow:3.1.7
+    container_name: airflow-scheduler
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    user: "${AIRFLOW_UID:-50000}:0"
+    command: scheduler
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./config:/opt/airflow/config
+    network_mode: host

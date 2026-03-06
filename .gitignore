@@ -4,6 +4,10 @@
 # data directories
 spark/docker/flint-0.7.0.jar
 spark/docker/python3.8/
+airflow/docker/config/
+airflow/docker/logs/
+airflow/docker/plugins/
+airflow/docker/dags/   
 
 # Python
 __pycache__/
