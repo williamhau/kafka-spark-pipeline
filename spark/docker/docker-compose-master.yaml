@@ -1,0 +1,12 @@
+services:
+  spark-master:
+    image: apache/spark:3.5.3-python3
+    container_name: spark-master
+    user: root
+    network_mode: "host"
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=127.0.0.1  # Force binding to localhost
+      - SPARK_MASTER_PORT=7077
+      - SPARK_MASTER_WEBUI_PORT=8080
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master

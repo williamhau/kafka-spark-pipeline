@@ -1,0 +1,11 @@
+services:
+  spark-worker-standalone:
+    image: apache/spark:3.5.3-python3
+    container_name: spark-worker-standalone
+    user: root
+    network_mode: "host"  # <--- This is the key for Ubuntu
+    environment:
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+    # We point to localhost because network_mode: host shares the host's IP stack
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://localhost:7077
