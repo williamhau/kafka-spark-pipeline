@@ -8,6 +8,13 @@ airflow/docker/config/
 airflow/docker/logs/
 airflow/docker/plugins/
 airflow/docker/dags/   
+spark/docker/Dockerfile.spark312
+spark/docker/buildDocker.sh
+spark/docker/docker-compose.yaml
+spark/docker/test-issue.sh
+spark/docker/testspark.py
+
+iceberg/
 
 # Python
 __pycache__/
