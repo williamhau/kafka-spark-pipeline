@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  timescaledb:
+    image: timescale/timescaledb-ha:pg16
+    container_name: timescaledb
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=stocks_db
+    volumes:
+      - ts_data:/home/postgres/pgdata/data
+    networks:
+      - stock-network
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${POSTGRES_PASSWORD}
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=timescale-toolkit-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - stock-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5050:80"
+    networks:
+      - stock-network
+
+networks:
+  stock-network:
+    driver: bridge
+
+volumes:
+  ts_data:
+  grafana_data:
