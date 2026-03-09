@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  memgraph:
+    image: memgraph/memgraph-mage:latest          # ← recommended: includes MAGE library (Cypher + algorithms)
+    # Alternative lighter version: memgraph/memgraph:latest (no extra algorithms)
+    
+    container_name: memgraph-db
+    ports:
+      - "7687:7687"     # Bolt protocol (main Cypher / client connection)
+      - "7444:7444"     # HTTP API / integrations
+      # - "10000:10000" # optional Prometheus metrics (uncomment if needed)
+
+    volumes:
+      - memgraph-data:/var/lib/memgraph
+      - memgraph-logs:/var/log/memgraph
+      # Optional: mount config if you want custom memgraph.conf
+      # - ./memgraph.conf:/etc/memgraph/memgraph.conf
+
+    # Optional useful flags (uncomment as needed)
+    command:
+      - "--log-level=INFO"
+      # - "--memory-limit=4g"           # limit RAM if needed
+      # - "--storage-properties-on-edges=true"  # if you need edge properties
+      # - "--bolt-cert-file=/path/to/cert.pem"  # for TLS
+
+
+    restart: unless-stopped
+    
+    #healthcheck:
+    #  test: ["CMD", "wget", "--spider", "http://localhost:7444"]
+    #  interval: 10s
+    #  timeout: 5s
+    #  retries: 5
+
+    #healthcheck:
+    #  test: ["CMD-SHELL", "nc -z localhost 7687 || exit 1"]
+    #  interval: 10s
+    #  timeout: 5s
+    #  retries: 10
+    #  start_period: 30s   # give more grace time on first start
+    
+  memgraph-lab:
+    image: memgraph/lab:latest
+    container_name: memgraph-lab
+    ports:
+      - "3000:3000"     # Open http://localhost:3000 in browser
+    environment:
+      - QUICK_CONNECT_MG_HOST=memgraph
+      - QUICK_CONNECT_MG_PORT=7687
+      # - QUICK_CONNECT_MG_USERNAME=     # if you enable auth later
+      # - QUICK_CONNECT_MG_PASSWORD=
+    depends_on:
+      - memgraph
+
+      #memgraph:
+      #  condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  memgraph-data:
+  memgraph-logs:
