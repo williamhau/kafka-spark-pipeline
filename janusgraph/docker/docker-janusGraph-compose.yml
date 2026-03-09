@@ -1,0 +1,16 @@
+version: "3"
+services:
+  janusgraph:
+    image: janusgraph/janusgraph:latest
+    container_name: janusgraph-default
+    restart: always
+    ports:
+      - "8182:8182"
+    environment:
+      # Optional: set memory limits if your Ubuntu desktop is resource-constrained
+      - JAVA_OPTIONS=-Xms512m -Xmx1024m
+    volumes:
+      - janusgraph-data:/var/lib/janusgraph
+
+volumes:
+  janusgraph-data:
